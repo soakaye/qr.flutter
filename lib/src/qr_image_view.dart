@@ -42,6 +42,7 @@ class QrImageView extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
+    this.qrImageDataType = QrImageDataType.text,
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
         this.foregroundColor,
   })  : assert(
@@ -76,6 +77,7 @@ class QrImageView extends StatefulWidget {
       color: Colors.black,
     ),
     this.embeddedImageEmitsError = false,
+    this.qrImageDataType = QrImageDataType.text,
     @Deprecated('use colors in eyeStyle and dataModuleStyle instead')
         this.foregroundColor,
   })  : assert(
@@ -154,6 +156,8 @@ class QrImageView extends StatefulWidget {
 
   @override
   State<QrImageView> createState() => _QrImageViewState();
+
+  final QrImageDataType qrImageDataType;
 }
 
 class _QrImageViewState extends State<QrImageView> {
@@ -170,6 +174,7 @@ class _QrImageViewState extends State<QrImageView> {
         data: widget._data!,
         version: widget.version,
         errorCorrectionLevel: widget.errorCorrectionLevel,
+        dataType: widget.qrImageDataType,
       );
       _qr = _validationResult.isValid ? _validationResult.qrCode : null;
     } else if (widget._qrCode != null) {

@@ -8,6 +8,8 @@ import 'package:qr/qr.dart';
 
 import 'qr_versions.dart';
 
+enum QrImageDataType { text, numberString, alphaNumeric }
+
 /// A utility class for validating and pre-rendering QR code data.
 class QrValidator {
   /// Attempt to parse / generate the QR code data and check for any errors. The
@@ -17,17 +19,36 @@ class QrValidator {
     required String data,
     int version = QrVersions.auto,
     int errorCorrectionLevel = QrErrorCorrectLevel.L,
+    QrImageDataType dataType = QrImageDataType.text,
   }) {
     late final QrCode qrCode;
     try {
       if (version != QrVersions.auto) {
         qrCode = QrCode(version, errorCorrectionLevel);
-        qrCode.addData(data);
+        if (dataType == QrImageDataType.alphaNumeric) {
+          qrCode.addAlphaNumeric(data);
+        } else if (dataType == QrImageDataType.numberString) {
+          qrCode.addNumeric(data);
+        } else {
+          qrCode.addData(data);
+        }
       } else {
-        qrCode = QrCode.fromData(
-          data: data,
-          errorCorrectLevel: errorCorrectionLevel,
-        );
+        if ((dataType == QrImageDataType.alphaNumeric) ||
+            (dataType == QrImageDataType.numberString)) {
+          qrCode = QrCode(QrVersions.auto, errorCorrectionLevel);
+          if (dataType == QrImageDataType.alphaNumeric) {
+            qrCode.addAlphaNumeric(data);
+          } else if (dataType == QrImageDataType.numberString) {
+            qrCode.addNumeric(data);
+          } else {
+            qrCode.addData(data);
+          }
+        } else {
+          qrCode = QrCode.fromData(
+            data: data,
+            errorCorrectLevel: errorCorrectionLevel,
+          );
+        }
       }
       return QrValidationResult(
         status: QrValidationStatus.valid,
